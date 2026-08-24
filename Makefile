@@ -23,6 +23,10 @@ install:		## Install dependencies
 	pip install -r requirements-test.txt
 	pip install -r requirements.txt
 
+.PHONY: train
+train:			## Train the model and write its artifact and metadata
+	python -m challenge.train
+
 STRESS_URL = http://127.0.0.1:8000 
 .PHONY: stress-test
 stress-test:

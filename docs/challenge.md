@@ -1,0 +1,78 @@
+# Software Engineer (ML & LLMs) Challenge
+
+- [Overview](#overview)
+- [Part I: Model](#part-i-model)
+    - [Analysis](#analysis)
+    - [Model Transcription](#model-transcription)
+    - [Tests](#tests)
+- [Part II: FastAPI App](#part-ii-fastapi-app)
+- [Part III: Deployment to GCP](#part-iii-deployment-to-gcp)
+- [Part IV: CI/CD & Git](#part-iv-cicd--git)
+    - [Git](#git)
+
+## Overview
+
+This document explains the results of the execution of this challenge, including: 
+- Mayor decisions taken
+- Steps taken
+- Analysis made
+- Others.
+
+It is divided into 4 Parts, mimicking the instructions for the challenge:
+- Part I: Model
+- Part II: FastAPI app
+- Part III: Deployment to GCP
+- Part IV: CI/CD & Git
+
+## Part I: Model
+
+### Analysis
+
+A short analysis on the resulting model was made:
+
+- The only features used were OPERA, TIPOVUELO, MES, which seems to have been a mistake; considering the plots, there should be useful information that can be added to the model
+- A proper validation dataset was not used, which makes the found metrics for a test dataset not fully valid as performance metrics, as they were used for taking desicions on the model
+- The train and test split was done without considering the time relation between the samples, making the metrics less representative for a real production setting; and not forcing the same class distribution (even though it ended up not being too different), which can be worth fixing for consistency in future cases.
+- Feature importance was taken from a model predicting everything as class 0, meaning that it didn't learn useful information from the data, that makes the listed feature importance not useful, including the top 10 features
+- It is unclear which metric is the one being used to select the model, recall for class 1 is mentioned, but could fall short in considering false positives; it's worth noting that a dummy model predicting everything as 0 has a high weighted f1-score and accuracy
+- Training the models without feature importance and with balance, made the Xgboost model better than before based on recall for class 1 (better than with feature importance selection and balance)
+- It's clear that xgboost could be fine-tuned more to achieve better results (or try other models, other feature extraction, etc), but since it's not the scope of the challenge, it'll be ignored
+
+**The newly added xgboost model (in this analysis) is the model that has the best recall for class 1, and does not worsen the f1 score. But to make sure to make the model compatible with the tests in the challenge, and to follow the DS conclusions, the logistic model with the top 10 features was used for production. Ultimately, if the model is useful at all depends on whether the benefit of predicting some delays outweighs the cost of having so many false positives. It's important to note that the model could be greatly improved by reworking the feature choice and extraction**
+
+
+### Model Transcription
+
+Relevant points: 
+- The logistic regression model with balanced class weight and the top 10 features was used, following the DS conclusions (see analysis above).
+- The one hot encoding was handled with "get_dummies" and setting the output features to the selected top 10 features, guaranteeing the correct feature shape and order for any input (does not require a trainable OneHotEncoder).
+- File train.py was added to train and save the model, providing repeatability for future model trainings. Can be run with "make train".
+- Model was saved to model.joblib file with build metadata in model_metadata.json for traceability, and is automatically loaded when creating a instance of DelayModel.
+- Check for correct and sufficient column in data was added to the preprocess, raises custom exception InputDataException if conditions are not met.
+- Warning is raised if model is not able to be loaded at runtime (can be trained at runtime by calling fit()), and exception is raised if prediction is called with no model loaded / trained.
+- Logging was added accros the entire process.
+
+### Tests
+
+All 4 tests in test_model were passed
+
+## Part II: FastAPI App
+
+
+## Part III: Deployment to GCP
+
+
+## Part IV: CI/CD & Git
+
+### Git
+
+Branches are structure as:
+- main
+- dev
+- feature_*:
+    - feature_model
+    - feature_fastapi
+    - feature_deployment_gcp
+    - feature_cicd
+
+Code was worked on feature branches then merged to _dev_, after all work was finished it was merged to _main_ 
