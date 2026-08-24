@@ -6,6 +6,8 @@
     - [Model Transcription](#model-transcription)
     - [Tests](#tests)
 - [Part II: FastAPI App](#part-ii-fastapi-app)
+    - [App Creation](#app-creation)
+    - [Tests](#tests)
 - [Part III: Deployment to GCP](#part-iii-deployment-to-gcp)
 - [Part IV: CI/CD & Git](#part-iv-cicd--git)
     - [Git](#git)
@@ -58,6 +60,20 @@ All 4 tests in test_model were passed
 
 ## Part II: FastAPI App
 
+### App Creation
+
+Relevant points:
+- DelayModel was integrated to predict on data recieved on the endpoint /predict, it is loaded once at import time.
+- Pydantic models for input and outdata were created (FlightData, PredictRequest, PredictResponse), providing both shape and content data validation.
+- If the input data passed to the endpoint does not have the propper format or data, the exception RequestValidationError is raised by pydantic, returning a message with the formatted problem detail and a 400 http code.
+- If ModelNotLoadedException is raised by the model on prediction, it is answered with a 503 service unavailable (model must be already trained to predict on data).
+- Logging was configured across the api.
+
+### Tests
+
+All 4 tests in test_api were passed
+
+Also, prediction test (test_should_get_predict) was modified to decouple it from model tests (and not depend on model specific predictions), by following the challenge comment left there, to mock the model prediction. 
 
 ## Part III: Deployment to GCP
 
