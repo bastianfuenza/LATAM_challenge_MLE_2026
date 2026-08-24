@@ -41,7 +41,7 @@ class FlightData(BaseModel):
         return value
 
 class PredictRequest(BaseModel):
-    flights: List[FlightData]
+    flights: List[FlightData] = Field(..., min_items=1)
 
 class PredictResponse(BaseModel):
     predict: List[int]
