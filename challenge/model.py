@@ -43,6 +43,36 @@ class DelayModel:
         "OPERA_Copa Air"
     ]
 
+    # Categories seen in the training data, used for validation on api.
+    MIN_MONTH = 1
+    MAX_MONTH = 12
+    TIPOVUELO_CATEGORIES = ['I', 'N']
+    OPERA_CATEGORIES = [
+        "Aerolineas Argentinas",
+        "Aeromexico",
+        "Air Canada",
+        "Air France",
+        "Alitalia",
+        "American Airlines",
+        "Austral",
+        "Avianca",
+        "British Airways",
+        "Copa Air",
+        "Delta Air",
+        "Gol Trans",
+        "Grupo LATAM",
+        "Iberia",
+        "JetSmart SPA",
+        "K.L.M.",
+        "Lacsa",
+        "Latin American Wings",
+        "Oceanair Linhas Aereas",
+        "Plus Ultra Lineas Aereas",
+        "Qantas Airways",
+        "Sky Airline",
+        "United Airlines"
+    ]
+
     RANDOM_STATE = 42
 
 
