@@ -1,13 +1,19 @@
 import unittest
 
 from fastapi.testclient import TestClient
+from mockito import when, ANY, unstub
+
 from challenge import app
+from challenge.model import DelayModel
 
 
 class TestBatchPipeline(unittest.TestCase):
     def setUp(self):
         self.client = TestClient(app)
-        
+
+    def tearDown(self):
+        unstub()
+
     def test_should_get_predict(self):
         data = {
             "flights": [
@@ -18,7 +24,7 @@ class TestBatchPipeline(unittest.TestCase):
                 }
             ]
         }
-        # when("xgboost.XGBClassifier").predict(ANY).thenReturn(np.array([0])) # change this line to the model of chosing
+        when(DelayModel).predict(ANY).thenReturn([0])  # So api test doesn't depend on model
         response = self.client.post("/predict", json=data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), {"predict": [0]})
@@ -34,7 +40,6 @@ class TestBatchPipeline(unittest.TestCase):
                 }
             ]
         }
-        # when("xgboost.XGBClassifier").predict(ANY).thenReturn(np.array([0]))# change this line to the model of chosing
         response = self.client.post("/predict", json=data)
         self.assertEqual(response.status_code, 400)
 
@@ -48,7 +53,6 @@ class TestBatchPipeline(unittest.TestCase):
                 }
             ]
         }
-        # when("xgboost.XGBClassifier").predict(ANY).thenReturn(np.array([0]))# change this line to the model of chosing
         response = self.client.post("/predict", json=data)
         self.assertEqual(response.status_code, 400)
     
@@ -62,6 +66,5 @@ class TestBatchPipeline(unittest.TestCase):
                 }
             ]
         }
-        # when("xgboost.XGBClassifier").predict(ANY).thenReturn(np.array([0]))
         response = self.client.post("/predict", json=data)
         self.assertEqual(response.status_code, 400)
