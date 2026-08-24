@@ -14,7 +14,11 @@ from challenge.model import DelayModel, InputDataException, ModelNotLoadedExcept
 setup_logging()
 logger = logging.getLogger(__name__)
 
-app = FastAPI()
+app = FastAPI(
+    title="Flight Delay Prediction API",
+    description="Predicts if scheduled flight will be delayed by more than 15 minutes",
+    version="1.0.0"
+)
 model = DelayModel()
 
 class FlightData(BaseModel):
