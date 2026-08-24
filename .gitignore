@@ -12,7 +12,6 @@ build/
 test-results
 **/.ipynb_checkpoints
 .coverage
-.coveragerc
 secrets/
 .vscode
 .pytest_cache
