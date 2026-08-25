@@ -12,6 +12,9 @@
     - [Deployment](#deployment)
     - [Tests](#tests)
 - [Part IV: CI/CD & Git](#part-iv-cicd--git)
+    - [CI/CD Pipeline](#cicd-pipeline)
+    - [Continuous Integration (CI)](#continuous-integration-ci)
+    - [Continuous Delivery (CD)](#continuous-delivery-cd)
     - [Git](#git)
 
 ## Overview
@@ -103,6 +106,49 @@ The stress test was run against the deployed app using the parameters provided b
 
 ## Part IV: CI/CD & Git
 
+### CI/CD Pipeline
+
+Due to Github limitations, it was decided to combine CI and CD in a single workflow split into two jobs, instead of two files; because the keyword 'needs:' only works between jobs in the same workflow; separating is posible, but more complex and less cleanly traceable.
+
+Relevant points:
+- Direct pushes to main were blocked for safety, so CI/CD run only on a merge push.
+- CI job runs on pull requests and push to dev and main (merge).
+- CD job only runs if CI is successfull and restricted to run on push to main (merge).
+- Linting with ruff was added to CI job to provide code quality checks. Limited to challenge/ by ruff.toml
+- Reports are uploaded as artifacts with `if: always()`, so also available on failure.
+- Images are tagged `run_id-sha`, so each deployment maps to one commit and one run.
+- After deploying, the app service is checked calling /health before running the stress tests
+- Authentication uses service account key. WIF is the standard, but its setup is not quite justified for a 3 day deployment; the key will be revoked after the review.
+- Pipeline was validated by temporarily running on the feature branch, the first run on main was not its first execution.
+
+### Continuous Integration (CI)
+
+CI is triggered on pull request to _main_ or _dev_, and on push to _dev_ or _main_ (merge). Executes the following steps:
+1. Checkout Code
+2. Install Python
+3. Install Make
+4. Install Python requirements
+5. Lint challenge folder with ruff
+6. Run Model & API tests (any failure stops the pipeline, on every branch)
+7. Upload Test Reports as an artifact
+
+### Continuous Delivery (CD)
+
+CD is triggered only on push to _main_ (merge), and only if CI succeeded. Executes the following steps:
+1. Setup Env variables
+2. Checkout Code
+3. Install Python
+4. Install Make
+5. Install Python requirements
+6. Setup GCP SDK with credentials
+7. Setup CLI and configure project
+8. Build Docker image
+9. Push Docker image to GCP Artifact Registry
+10. Deploy Docker container to GCP Cloud Run
+11. Verify the deployed service answers on /health
+12. Run Stress Test
+13. Upload Test Reports as an artifact
+
 ### Git
 
 Branches are structure as:
@@ -114,4 +160,11 @@ Branches are structure as:
     - feature_deployment_gcp
     - feature_cicd
 
-Code was worked on feature branches then merged to _dev_, after all work was finished it was merged to _main_ 
+Code was worked on feature branches then merged to _dev_ through pull requests, after all work was finished it was merged to _main_
+
+Relevant points:
+- main is protected: no direct pushes, merging requires a pull request.
+- dev integrates the parts before they reach main, which stays deployable.
+- Commit messages follow Conventional Commits with a scope.
+- The final state is tagged v1.0.0 and published as a GitHub release.
+- Branches are kept after merging, so they remain reviewable.
