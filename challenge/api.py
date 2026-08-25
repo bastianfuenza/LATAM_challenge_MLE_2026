@@ -82,7 +82,7 @@ async def post_predict(request: PredictRequest) -> PredictResponse:
 
         return {"predict": predictions}
     except InputDataException as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)) from e
     except ModelNotLoadedException as e:
         # Service is up but can't serve predictions yet
-        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(e))
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(e)) from e
