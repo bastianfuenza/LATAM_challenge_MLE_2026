@@ -9,6 +9,8 @@
     - [App Creation](#app-creation)
     - [Tests](#tests)
 - [Part III: Deployment to GCP](#part-iii-deployment-to-gcp)
+    - [Deployment](#deployment)
+    - [Tests](#tests)
 - [Part IV: CI/CD & Git](#part-iv-cicd--git)
     - [Git](#git)
 
@@ -77,6 +79,27 @@ Also, prediction test (test_should_get_predict) was modified to decouple it from
 
 ## Part III: Deployment to GCP
 
+### Deployment
+
+App URL: https://latam-mle-app-2026-712938310629.us-central1.run.app
+
+Docker image containing the app is sent to GCP Artifact Registry, and run in GCP Cloud Run; being publicly available to be consumed
+
+Relevant points:
+- Base image set to python:3.11-slim, same version used for development and testing; python:latest was avoided for reproducibility.
+- Dependencies are installed before copying the application code, dependency layer is reused whenever only source files change.
+- The container is compatible with Cloud Run's injected $PORT, defaulting to 8000 for local runs.
+- A .dockerignore was added, reducing the build context by excluding unnecesary things like .venv, .git, data and test artifacts.
+- Version for pandas was updated to the closest version with a wheel, all tests continue passing with no changes
+- Makefile was updated to run stress test against the deployed app.
+
+### Tests
+
+The stress test was run against the deployed app using the parameters provided by the challenge Makefile (100 users, spawn rate 1/s, 60s run time):
+
+- 5196 requests, 0 failures (0.00%)
+- Median 330 ms, p95 590 ms, p99 700 ms, max 1217 ms
+- ~113 req/s at peak
 
 ## Part IV: CI/CD & Git
 
