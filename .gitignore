@@ -1,6 +1,5 @@
 .venv/
 **/__pycache__/
-*.pkl
 *.pickle
 *.png
 **/dist/
@@ -12,9 +11,7 @@ build/
 .DS_Store
 test-results
 **/.ipynb_checkpoints
-*.json
 .coverage
-.coveragerc
 secrets/
 .vscode
 .pytest_cache

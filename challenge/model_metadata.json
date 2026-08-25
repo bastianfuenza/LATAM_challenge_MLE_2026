@@ -1,0 +1,41 @@
+{
+  "created_at": "2026-08-24T02:57:17.661013+00:00",
+  "data": {
+    "path": "data/data.csv",
+    "sha256": "4fcb09fdc4fce861cee62de28a83b9d16e45b99f11c785f682d2d43a731b0e29",
+    "rows": 68206
+  },
+  "model": {
+    "estimator": "LogisticRegression",
+    "params": {
+      "C": 1.0,
+      "class_weight": "balanced",
+      "dual": false,
+      "fit_intercept": true,
+      "intercept_scaling": 1,
+      "l1_ratio": null,
+      "max_iter": 100,
+      "multi_class": "auto",
+      "n_jobs": null,
+      "penalty": "l2",
+      "random_state": null,
+      "solver": "lbfgs",
+      "tol": 0.0001,
+      "verbose": 0,
+      "warm_start": false
+    },
+    "features": [
+      "OPERA_Latin American Wings",
+      "MES_7",
+      "MES_10",
+      "OPERA_Grupo LATAM",
+      "MES_12",
+      "TIPOVUELO_I",
+      "MES_4",
+      "MES_11",
+      "OPERA_Sky Airline",
+      "OPERA_Copa Air"
+    ],
+    "target": "delay"
+  }
+}

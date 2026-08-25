@@ -1,0 +1,11 @@
+[run]
+source = challenge
+omit =
+    # Training script for clarity, run by hand via 'make train'. Not part of the served code.
+    challenge/train.py
+
+[report]
+show_missing = True
+exclude_lines =
+    pragma: no cover
+    if __name__ == .__main__.:
